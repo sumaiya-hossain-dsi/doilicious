@@ -20,7 +20,8 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Two jars of Doilicious mishti doi beside a basket of strawberries">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preload" as="image" href="img/hero2-720.webp" imagesrcset="img/hero2-720.webp 720w, img/hero2-1080.webp 1080w, img/hero2-1333.webp 1333w" imagesizes="(min-width: 1731px) 900px, (min-width: 760px) 52vw, 100vw" fetchpriority="high">
+<link rel="preload" as="image" href="img/hero2-720.webp" imagesrcset="img/hero2-720.webp 720w, img/hero2-1080.webp 1080w, img/hero2-1333.webp 1333w" imagesizes="(min-width: 1731px) 900px, (min-width: 760px) 52vw, 100vw" media="(max-width: 1023.98px)" fetchpriority="high">
+<link rel="preload" as="image" href="img/hero-picnic-1600.webp" imagesrcset="img/hero-picnic-1200.webp 1200w, img/hero-picnic-1600.webp 1600w, img/hero-picnic-2400.webp 2400w" imagesizes="(min-width: 1700px) 1612px, 100vw" media="(min-width: 1024px)" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=DM+Serif+Display&family=EB+Garamond:ital,wght@1,400&family=Oooh+Baby&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
@@ -144,26 +145,47 @@
   .hero .btn{margin-top:26px; width:100%}
 
   @media (min-width:760px){
-    .hero{min-height:clamp(540px, calc(100svh - var(--header-h)), 780px); display:flex; align-items:center}
+    .hero{min-height:clamp(540px, min(calc(100svh - var(--header-h)), 78vw), 780px); display:flex; align-items:center} /* 78vw keeps the photo box at least 2:3, so both jars stay whole on tablets */
     .hero{isolation:isolate}
     .hero-media{position:absolute; inset:0 0 0 auto; width:min(52%, 900px)}
-    /* A mirrored, blurred copy of the photo continues it softly under the text, so the photo melts into the page instead of stopping at an edge. */
-    .hero-media::before{content:""; position:absolute; top:-60px; bottom:-60px; right:75%; width:100%; z-index:-1; pointer-events:none;
-      background:url(img/hero2-1080.webp) 50% 70% / cover no-repeat; transform:scaleX(-1); filter:blur(40px) saturate(.85); opacity:.6}
-    /* ...then eases back to plain cream towards the left edge; fully transparent where the photo begins, so there is no seam. */
-    .hero::after{content:""; position:absolute; inset:0 auto 0 0; width:calc(100% - min(52%, 900px) + 1px); z-index:-1; pointer-events:none;
-      background:linear-gradient(to right, var(--bg) 0, var(--bg) 22%, rgba(249,244,238,.8) 50%, rgba(249,244,238,.35) 80%, rgba(249,244,238,0) 100%)}
-    .hero-media img{height:100%; max-height:none; aspect-ratio:auto; object-position:50% 70%}
-    .hero-media .fade{--mx:linear-gradient(to right, transparent 0, rgba(0,0,0,.4) 8%, rgba(0,0,0,.85) 20%, #000 28%); --my:linear-gradient(to bottom, transparent 0, #000 9%, #000 82%, transparent 100%)}
+    /* The quiet left side of the scene: blanket from the same picnic shoot. The text rests on it and the jars photo melts into it. */
+    .hero::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+      /* The file is the blanket plus its mirror image. Size it so the mirror join always sits under the solid part of the photo. */
+      background:url(img/hero-cloth-1320.webp) 0 50% / max(2694px, calc(200% - min(83.2%, 1440px))) auto no-repeat;
+      -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 9%, #000 82%, transparent 100%); mask-image:linear-gradient(to bottom, transparent 0, #000 9%, #000 82%, transparent 100%)}
+    .hero-media img{height:100%; max-height:none; aspect-ratio:auto; object-position:50% 55%}
+    .hero-media .fade{--mx:linear-gradient(to right, transparent 0, rgba(0,0,0,.5) 7%, rgba(0,0,0,.9) 15%, #000 20%); --my:linear-gradient(to bottom, transparent 0, #000 9%, #000 82%, transparent 100%)}
     .hero-note{top:4%; right:auto; left:40%; width:8.5em; font-size:clamp(1.4rem, 2vw, 1.95rem); transform:rotate(-12deg)}
     .hero-copy{margin:0; padding:clamp(48px, 7vh, 96px) 0 clamp(56px, 8vh, 104px) var(--edge); width:calc(var(--edge) + min(42vw, 36rem))}
-    .hero-copy::before{content:""; position:absolute; inset:-10% -30% -10% -40%; z-index:-1; background:radial-gradient(closest-side, rgba(249,244,238,.9), rgba(249,244,238,.6) 55%, rgba(249,244,238,0))}
+    /* Readability: a soft-edged patch behind the text only, which blurs the photo and washes it towards cream. */
+    .hero-copy{z-index:1} /* so the patch sits above the photo, below the text */
+    .hero-copy::before{content:""; position:absolute; z-index:-1; pointer-events:none; top:2%; bottom:-14%; left:calc(var(--edge) - 170px); right:20px;
+      background:radial-gradient(closest-side, rgba(249,244,238,.62), rgba(249,244,238,.45) 60%, rgba(249,244,238,.14) 88%, rgba(249,244,238,0));
+      -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px);
+      -webkit-mask-image:radial-gradient(closest-side, #000 62%, transparent 100%); mask-image:radial-gradient(closest-side, #000 62%, transparent 100%)}
     .hero h1{font-size:clamp(3rem, 5.4vw, 5.1rem); line-height:.98}
     .tagline{font-size:clamp(1.6rem, 2.9vw, 2.7rem); margin:.28em 0 .7em}
     .lede{font-size:clamp(1.05rem, 1.45vw, 1.3rem); line-height:1.48; max-width:21.5em}
     .hero .btn{width:auto; min-width:14rem; min-height:60px; margin-top:30px; font-size:1.2rem}
   }
+  /* From 1024px the hero is one wide scene (blanket on the left for the text, jars on the right), faded top and bottom. */
+  @media (min-width:1024px){
+    .hero::before{content:none}
+    .hero-media{inset:0; width:auto}
+    .hero-media img{object-position:100% 50%}
+    .hero-media .fade{--mx:linear-gradient(#000,#000)}
+    .hero-note{left:auto; right:5%; top:6%}
+    /* a light frosted patch instead of the phone layout's solid wash */
+    .hero-note::before{inset:-12% -16% -6%; background:radial-gradient(closest-side, rgba(249,244,238,.6), rgba(249,244,238,.35) 60%, rgba(249,244,238,0));
+      -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+      -webkit-mask-image:radial-gradient(closest-side, #000 55%, transparent 100%); mask-image:radial-gradient(closest-side, #000 55%, transparent 100%)}
+  }
   @media (min-width:1600px){ .hero{min-height:clamp(540px, calc(100svh - var(--header-h)), 900px)} }
+  /* Very wide screens: keep the scene's full height instead of cropping it; its blanket edge fades into the page. */
+  @media (min-width:1700px){
+    .hero-media{left:auto; width:min(100%, 1612px)}
+    .hero-media .fade{--mx:linear-gradient(to right, transparent 0, #000 14%)}
+  }
   @media (min-width:1024px){
     .hero-copy{padding-top:clamp(104px, 13vh, 132px); padding-bottom:clamp(60px, 9vh, 104px)}
   }
@@ -552,6 +574,7 @@
   <section class="hero" id="top" aria-labelledby="hero-title">
     <div class="hero-media">
       <picture>
+        <source media="(min-width: 1024px)" srcset="img/hero-picnic-1200.webp 1200w, img/hero-picnic-1600.webp 1600w, img/hero-picnic-2400.webp 2400w" sizes="(min-width: 1700px) 1612px, 100vw" width="2400" height="1340">
         <img src="img/hero2-720.webp" srcset="img/hero2-720.webp 720w, img/hero2-1080.webp 1080w, img/hero2-1333.webp 1333w" sizes="(min-width: 1731px) 900px, (min-width: 760px) 52vw, 100vw" width="1333" height="2000" class="fade" alt="Two jars of Doilicious mishti doi on a bamboo tray, with strawberries, blackberries, a honey dipper and a basket of baby’s-breath flowers on a cream blanket" fetchpriority="high">
       </picture>
       <p class="note note--halo hero-note">good<br>dessert<br>brings people<br>together<svg class="heart" aria-hidden="true"><use href="#a-heart"/></svg></p>
